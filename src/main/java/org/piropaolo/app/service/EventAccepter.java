@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 @Service
 @Getter
 @Slf4j
@@ -24,19 +26,18 @@ public class EventAccepter {
 
     public Boolean register(String eventId, String userId) {
         try {
-            eventRepository.getEventMap().merge(
-                    eventId,
-                    Stream.of(new View(userId)).collect(Collectors.toSet()),
-                    (oldSet, newView) -> Stream.concat(oldSet.stream(), newView.stream()).collect(Collectors.toSet())
-            );
+            checkNotNull(eventId);
+            checkNotNull(userId);
         } catch (NullPointerException e) {
             log.error("Register method arguments cannot be null.", e);
             return Boolean.FALSE;
-        } catch (RuntimeException e) {
-            log.error("Something is wrong with the remappingFunction.", e);
-            return Boolean.FALSE;
         }
 
+        eventRepository.getEventMap().merge(
+                eventId,
+                Stream.of(new View(userId)).collect(Collectors.toSet()),
+                (oldSet, newView) -> Stream.concat(oldSet.stream(), newView.stream()).collect(Collectors.toSet())
+        );
 
         return Boolean.TRUE;
     }
