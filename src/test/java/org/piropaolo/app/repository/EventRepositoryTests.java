@@ -67,6 +67,13 @@ class EventRepositoryTests {
         eventRepository.getEventMap().forEach((eventId, views) -> assertEquals(120, views.size()));
     }
 
+    @Test
+    void Should_ReadProperties() {
+        assertEquals(10, eventRepository.getInitialCapacity());
+        assertEquals(0.5f, eventRepository.getLoadFactor());
+        assertEquals(32, eventRepository.getConcurrencyLevel());
+    }
+
     @AfterEach
     void tearDown() {
         eventRepository.getEventMap().clear();
