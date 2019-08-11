@@ -1,6 +1,6 @@
 package org.piropaolo.app.service;
 
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,11 +20,6 @@ class EventAccepterTests {
 
     @Autowired
     EventAccepter eventAccepter;
-
-    @BeforeEach
-    void init() {
-        eventAccepter.getEventRepository().getEventMap().clear();
-    }
 
     @Test
     void Should_RegisterEvent() {
@@ -90,4 +85,10 @@ class EventAccepterTests {
     void Should_NotRegisterEvent_WhenUserIdIsNull() {
         assertFalse(eventAccepter.register("e1", null));
     }
+
+    @AfterEach
+    void tearDown() {
+        eventAccepter.getEventRepository().getEventMap().clear();
+    }
+
 }

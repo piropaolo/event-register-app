@@ -41,7 +41,10 @@ public class EventProvider {
 
         return Ints.checkedCast(eventRepository.getEventMap().get(eventId)
                 .stream()
-                .filter(view -> OffsetDateTime.now().minusMinutes(n).isBefore(view.getTs()))
+                .filter(view -> OffsetDateTime
+                        .now()
+                        .minusMinutes(n)
+                        .isBefore(view.getTs()))
                 .count());
     }
 
@@ -61,7 +64,10 @@ public class EventProvider {
 
         eventRepository.getEventMap().forEach((eventId, views) -> resultMap.put(eventId, Ints.checkedCast(views
                 .stream()
-                .filter(view -> OffsetDateTime.now().minusMinutes(n).isBefore(view.getTs()))
+                .filter(view -> OffsetDateTime
+                        .now()
+                        .minusMinutes(n)
+                        .isBefore(view.getTs()))
                 .count())));
 
         return resultMap;
