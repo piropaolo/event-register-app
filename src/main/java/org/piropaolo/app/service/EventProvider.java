@@ -3,6 +3,7 @@ package org.piropaolo.app.service;
 import com.google.common.primitives.Ints;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.piropaolo.app.domain.View;
 import org.piropaolo.app.repository.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,9 @@ import org.springframework.stereotype.Service;
 import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -45,6 +49,7 @@ public class EventProvider {
                         .now()
                         .minusMinutes(n)
                         .isBefore(view.getTs()))
+                .filter(distinctByKey(View::getUserId))
                 .count());
     }
 
@@ -68,8 +73,17 @@ public class EventProvider {
                         .now()
                         .minusMinutes(n)
                         .isBefore(view.getTs()))
+                .filter(distinctByKey(View::getUserId))
                 .count())));
 
         return resultMap;
     }
+
+    private static <T> Predicate<T> distinctByKey(
+            Function<? super T, ?> keyExtractor) {
+
+        Map<Object, Boolean> seen = new ConcurrentHashMap<>();
+        return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
+    }
+
 }
