@@ -23,20 +23,27 @@ class EventRepositoryTests {
 
     @BeforeEach
     void init() {
+        /* 5 distinct eventIds */
         IntStream.range(0, 5).forEach(c1 -> {
             Set<View> views = new HashSet<>();
+            /* 200 distinct userIds */
             IntStream.range(0, 200).forEach(c2 -> {
                 String userId = UUID.randomUUID().toString();
+                /* Set view timestamps in range from 95 min before to now. */
                 OffsetDateTime ts = OffsetDateTime.now().minusMinutes(c2 % 20 * 5);
                 views.add(new View(userId, ts));
             });
             eventRepository.getEventMap().put("e" + c1, views);
         });
 
+        /* other 5 distinct eventIds */
         IntStream.range(5, 10).forEach(c1 -> {
             Set<View> views = new HashSet<>();
+            /* 200 distinct userIds */
             IntStream.range(0, 200).forEach(c2 -> {
                 String userId = UUID.randomUUID().toString();
+                /* Set view timestamps in range from 155 min before to 60 min before.
+                 * This ensures events(5-9) and their views should be cleared. */
                 OffsetDateTime ts = OffsetDateTime.now().minusMinutes(c2 % 20 * 5 + 60);
                 views.add(new View(userId, ts));
             });
